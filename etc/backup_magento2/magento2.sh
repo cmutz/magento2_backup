@@ -37,9 +37,9 @@ println info $BACKUP_DB
 #=============== rsync backups ======================
 #===============================================================
 echo "rsync -av $BACKUP_CODE $SSH_USER@$SSH_SERVER:$SSH_FOLDER"
-$PATH_RSYNC -av --rsh='ssh -p2222' $BACKUP_CODE $SSH_USER@$SSH_SERVER:$SSH_FOLDER
-$PATH_RSYNC -av --rsh='ssh -p2222' $BACKUP_MEDIA $SSH_USER@$SSH_SERVER:$SSH_FOLDER
-$PATH_RSYNC -av --rsh='ssh -p2222' $BACKUP_DB $SSH_USER@$SSH_SERVER:$SSH_FOLDER
+$PATH_RSYNC -av --rsh="ssh -p${SSH_PORT}" $BACKUP_CODE $SSH_USER@$SSH_SERVER:$SSH_FOLDER
+$PATH_RSYNC -av --rsh="ssh -p${SSH_PORT}" $BACKUP_MEDIA $SSH_USER@$SSH_SERVER:$SSH_FOLDER
+$PATH_RSYNC -av --rsh="ssh -p${SSH_PORT}" $BACKUP_DB $SSH_USER@$SSH_SERVER:$SSH_FOLDER
 }
 
 

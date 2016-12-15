@@ -56,6 +56,10 @@ echo -en "SSH_SERVER ?"
 read S_SERVER
 echo "SSH_SERVER="$S_SERVER"" >> /etc/backup_magento2/globals.sh
 
+echo -en "SSH_PORT ?"
+read S_PORT
+echo "SSH_PORT="$S_PORT"" >> /etc/backup_magento2/globals.sh
+
 echo -en "SSH_FOLDER ?"
 read S_FOLDER
 echo "SSH_FOLDER="$S_FOLDER"" >> /etc/backup_magento2/globals.sh
