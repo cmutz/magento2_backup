@@ -11,6 +11,9 @@
 [ `whoami`  != "root" ] && println error "This script need to be launched as root." && exit 1
 
 
+# changement de repertoire courant !
+cd "$(dirname "$0")"
+
 #================== Functions ================================================
 source LIBRARY/functions.sh
 source  globals.sh
