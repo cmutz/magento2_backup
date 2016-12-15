@@ -23,7 +23,7 @@ function backup {
 #============ Fabrication d'un backup magento2 =================
 #===============================================================
 
-php $PATH_WEBSITE/bin/magento setup:backup code media db
+php $PATH_WEBSITE/bin/magento setup:backup --code --media --db
 
 #===============================================================
 #============ Recuperation des DERNIERS backups ================
@@ -45,7 +45,6 @@ $PATH_RSYNC -av --rsh="ssh -p${SSH_PORT}" $BACKUP_MEDIA $SSH_USER@$SSH_SERVER:$S
 $PATH_RSYNC -av --rsh="ssh -p${SSH_PORT}" $BACKUP_DB $SSH_USER@$SSH_SERVER:$SSH_FOLDER
 }
 
-
 function retention {
 echo 1
 }
@@ -55,3 +54,9 @@ function rollback {
 echo 1
 }
 
+
+#===============================================================
+#======================= main() ================================
+#===============================================================
+
+backup
