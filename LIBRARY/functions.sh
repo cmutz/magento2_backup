@@ -1,21 +1,25 @@
 #!/bin/bash
 
-check_soft() {
-
+# parametre $1 : nom de logiciel a verifier
+f_check_soft() {
    which $1 > /dev/null
     if [ $? != 0 ] ; then
         println error " $1	---> [ KO ]"
-        export check_soft="KO"
+	println error "$1 non detecte sur cette distribution vous pouvez"
+	println error "l'installer en faisant un apt-get install $1 "
+	println error " et/ou verifier manuellement la presence du paquet"
+        exit 1
     else
         println ras " $1	---> [ OK ]"
-
     fi
 sleep 0.5
 }
 
 
-# Test de validité IPv4 de l'adresse entrée (expression régulière)
-function isIPv4 {
+# Test de validite IPv4 de l'adresse entree (expression reguliere)
+# parametre $1 : adresse IP à vérifier
+# code de sortie : 0 pour ok et 1 pour adresse ipv4 non valide
+f_isIPv4() {
 if [ $# = 1 ]
 then
  printf $1 | grep -Eq '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-4]|2[0-4][0-9]|[01]?[1-9][0-9]?)$'
@@ -26,36 +30,42 @@ fi
 }
 
 
-verification_access_ping() {
-
-    println info "\t\nvérification de l'accessibilité du serveur"
-    ${PATCH_PING} -c1 $* > /dev/null
-    if [ $? != 0 ] ; then
-	return 2
+f_verification_access_ping() {
+# vérifier si le serveur est joiniable 
+# code de sortie : 0 pour ok et 1 pour adresse ipv4 non valide
+    if PATCH_PING=$(which ping) ; then 
+	println info "\t\nvérification de l'accessibilité du serveur"
+        ${PATCH_PING} -c1 $*
+	# Si le resultat de la commande renvoi != 0 alors ça ping !
+	echo $?
+        if [ $? != 0 ] ; then return 2 echo toto;	else return 0;	fi
     else 
-	return 0
+	return 2; 
     fi
-       
 }
 
 
-generate_pair_authentication_keys() {
+f_generate_pair_authentication_keys() {
+    println info "\t\n Verification du paquet ssh-keygen \n"
+    check_soft ssh-keygen
 
     println info "\t\n Creation de la pair ssh sur le serveur local\n"
     if [ ! -f /root/.ssh/id_rsa.pub ]; then
-	${PATCH_KEYGEN} -t rsa -f /$1/.ssh/id_rsa -N ""
+    ${PATCH_KEYGEN} -t rsa -f /$1/.ssh/id_rsa -N ""
     else 
-	println warn "\t\n/$1/.ssh/id_rsa.pub exist"
-	println warn "\t\n Utilisation de la pair de clé /$1/.ssh/id_rsa"
+    println warn "\t\n/$1/.ssh/id_rsa.pub exist"
+    println warn "\t\n Utilisation de la pair de clé /$1/.ssh/id_rsa"
     fi
+	### Ne comprend pas ce que ça fait là !  ###
     println warn "\t\n------------> WARNING !!!! <------------ \n"
     println warn "\t\n------------> ETES VOUS PRET A RENTRER LE MOT DE PASSE de l'utilisateur $1 (presser entrer) <------------ \n"; read
     [ -f ${PATCH_SSH_COPY_ID} ] && ${PATCH_SSH_COPY_ID} -i /$1/.ssh/id_rsa.pub $1@$2 -p ${PORT_SSH}
+	### Ne comprend pas ce que ça fait là !  ###
 }
 
-verification_connexion_ssh() {
+f_verification_connexion_ssh() {
 
-    println info "\tvérification de la connection ssh\n"
+    println info "\t vérification de la connection ssh\n"
 
     cat > ${PATCH_TMP}${NAME_SCRIPT} << EOF
 #!/usr/bin/expect -f
@@ -97,7 +107,7 @@ println() {
 }
 
 
-ask_yn_question()
+f_ask_yn_question()
 {
     QUESTION=$1
 
@@ -118,8 +128,8 @@ ask_yn_question()
 }
 
 
-# function dectection de distribution 
-detectdistro () {
+# function detection de distribution 
+f_detectdistro () {
   if [[ -z $distro ]]; then
     distro="Unknown"
     if grep -i debian /etc/lsb-release >/dev/null 2>&1; then distro="debian"; fi
@@ -145,16 +155,31 @@ detectdistro () {
 f_LOG() {
     echo "`date`:$@" >> $LOGFILE
 }
-
-
 f_INFO() {
     echo "$@"
     f_LOG "INFO: $@"
 }
-
-
 f_WARNING() {
     echo "$@"
     f_LOG "WARNING: $@"
+}
+
+# Verifie la réponse saisie de l'utilisateur
+# arg1 : saisie de l'utilisateur
+# argn : reponses attendu de l'utilisateur
+# f_checkanswer arg1 arg2 arg3 ... argn
+f_checkanswer () {
+#On stock tous les elements
+tab=($*)
+#on recupere le derniere element
+f_element=${tab[0]}
+tab=(${*:2})
+for mot in ${tab[*]}
+do
+    if [ "$f_element" = $mot ];
+    then
+        return 1;
+    fi
+done
 }
 
