@@ -52,7 +52,7 @@ echo -en "SSH_USER ?"
 read S_USER
 echo "SSH_USER=$S_USER" >> /etc/backup_magento2/globals.sh
 
-echo -en "PATH_SERVER ?"
+echo -en "SSH_SERVER ?"
 read S_SERVER
 echo "SSH_SERVER="$S_SERVER"" >> /etc/backup_magento2/globals.sh
 
