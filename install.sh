@@ -69,4 +69,4 @@ echo "PATH_RSYNC="`which rsync`"" >> /etc/backup_magento2/globals.sh
 
 
 println info " \n\tCopie du Cron\n"
-rsync -av cron.sh /etc/cron.d/backup_magento2.sh
+rsync -av cron.sh /etc/cron.d/backup_magento2
